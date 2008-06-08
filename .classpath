@@ -1,0 +1,26 @@
+<classpath>
+  <classpathentry kind="src" path="src/main/java"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="var" path="M2_REPO/args4j/args4j/2.0.8/args4j-2.0.8.jar" sourcepath="M2_REPO/args4j/args4j/2.0.8/args4j-2.0.8-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/junit/junit/4.4/junit-4.4.jar" sourcepath="M2_REPO/junit/junit/4.4/junit-4.4-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/alan/.m2/repository/junit/junit/4.4/junit-4.4-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/agtrz/pack/0.1/pack-0.1.jar" sourcepath="M2_REPO/com/agtrz/pack/0.1/pack-0.1-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/alan/.m2/repository/com/agtrz/pack/0.1/pack-0.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/agtrz/strata/0.1/strata-0.1.jar" sourcepath="M2_REPO/com/agtrz/strata/0.1/strata-0.1-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/alan/.m2/repository/com/agtrz/strata/0.1/strata-0.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/agtrz/swag-util/0.1/swag-util-0.1.jar" sourcepath="M2_REPO/com/agtrz/swag-util/0.1/swag-util-0.1-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/alan/.m2/repository/com/agtrz/swag-util/0.1/swag-util-0.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+</classpath>
