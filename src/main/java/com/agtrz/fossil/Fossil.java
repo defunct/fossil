@@ -283,8 +283,8 @@ implements Strata.Storage, Serializable
 
         public Schema()
         {
-            this.reader = new BentoAddressReader();
-            this.writer = new BentoAddressWriter();
+            this.reader = new PackAddressReader();
+            this.writer = new PackAddressWriter();
             this.recordSize = 8;
         }
 
@@ -367,7 +367,7 @@ implements Strata.Storage, Serializable
         public void write(ByteBuffer bytes, Object object);
     }
 
-    public final static class BentoAddressWriter
+    public final static class PackAddressWriter
     implements Writer
     {
         public void write(ByteBuffer out, Object object)
@@ -377,7 +377,7 @@ implements Strata.Storage, Serializable
         }
     }
 
-    public final static class BentoAddressReader
+    public final static class PackAddressReader
     implements Reader
     {
         public Object read(ByteBuffer in)
