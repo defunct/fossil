@@ -7,11 +7,9 @@ import java.nio.ByteBuffer;
 import com.agtrz.pack.Pack;
 import com.agtrz.strata.Strata;
 import com.agtrz.strata.Strata.Storage;
-import com.agtrz.swag.util.Queueable;
-import com.agtrz.swag.util.WeakMapValue;
 
-public class BentoStorage
-extends BentoStorageBase
+public class Fossil
+extends FossilBase
 implements Strata.Storage, Serializable
 {
     private static final int SIZEOF_SHORT = Short.SIZE / Byte.SIZE;
@@ -24,7 +22,7 @@ implements Strata.Storage, Serializable
 
     private final Schema schema;
 
-    public BentoStorage(Schema schema)
+    public Fossil(Schema schema)
     {
         this.schema = schema;
     }
@@ -329,7 +327,7 @@ implements Strata.Storage, Serializable
 
         public Storage newStorage()
         {
-            return new BentoStorage(this);
+            return new Fossil(this);
         }
     }
 

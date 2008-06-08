@@ -58,11 +58,6 @@
             <artifactId>strata</artifactId>
             <version>0.1</version>
         </dependency>
-        <dependency>
-            <groupId>com.agtrz</groupId>
-            <artifactId>swag-util</artifactId>
-            <version>0.1</version>
-        </dependency>
     </dependencies>
 
     <build>

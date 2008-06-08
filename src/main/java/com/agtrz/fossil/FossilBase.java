@@ -6,15 +6,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.agtrz.strata.Strata;
-import com.agtrz.swag.util.WeakMapValue;
 
 /**
- * This class is the base of {@link BentoStorage} and is necessary to
+ * This class is the base of {@link Fossil} and is necessary to
  * initialize the transient fields during deserialization.
  * 
  * @author Alan Gutierrez
  */
-class BentoStorageBase
+class FossilBase
 {
     protected final transient ReferenceQueue<Strata.Tier> queue = new ReferenceQueue<Strata.Tier>();
 
