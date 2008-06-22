@@ -2,227 +2,39 @@
 package com.agtrz.fossil;
 
 import java.io.Serializable;
+import java.lang.ref.ReferenceQueue;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.agtrz.pack.Pack;
 import com.agtrz.strata.Strata;
-import com.agtrz.strata.Strata.Storage;
+import com.agtrz.strata.Strata.Branch;
+import com.agtrz.strata.Strata.Identifier;
+import com.agtrz.strata.Strata.Tier;
 
-public class Fossil
-extends FossilBase
-implements Strata.Storage, Serializable
+public class Fossil<T>
+implements Strata.Storage<T>, Serializable
 {
-    private static final int SIZEOF_SHORT = Short.SIZE / Byte.SIZE;
-
     private static final int SIZEOF_INT = Integer.SIZE / Byte.SIZE;
-    
+
     private static final int SIZEOF_LONG = Long.SIZE / Byte.SIZE;
-    
+
+    public static final int FOSSIL_LEAF_HEADER_SIZE = SIZEOF_LONG + SIZEOF_INT;
+
     private static final long serialVersionUID = 20070401L;
 
-    private final Schema schema;
+    private final Schema<T> schema;
+    
+    private final Strata.Store<Branch> branchStore;
+    
+    private final Strata.Store<T> leafStore;
 
-    public Fossil(Schema schema)
+    public Fossil(Strata.Structure structure, Schema<T> schema)
     {
         this.schema = schema;
-    }
-
-    public Strata.InnerTier newInnerTier(Strata.Structure structure, Object txn, short typeOfChildren)
-    {
-        Pack.Mutator mutator = ((MutatorServer) txn).getMutator();
-        int blockSize = SIZEOF_SHORT + SIZEOF_INT + (SIZEOF_LONG + schema.getRecordSize()) * (structure.getSchema().getSize() + 1);
-        long address = mutator.allocate(blockSize);
-        Strata.InnerTier inner = new Strata.InnerTier(structure, address, typeOfChildren);
-        mapOfTiers.put(address, new WeakMapValue<Long, Strata.Tier>(address, inner, mapOfTiers, queue));
-        return inner;
-    }
-
-    public Strata.LeafTier newLeafTier(Strata.Structure structure, Object txn)
-    {
-        Pack.Mutator mutator = ((MutatorServer) txn).getMutator();
-        int blockSize = SIZEOF_INT + (SIZEOF_LONG * 2) + (schema.getRecordSize() * structure.getSchema().getSize());
-        long address = mutator.allocate(blockSize);
-        Strata.LeafTier leaf = new Strata.LeafTier(structure, address);
-        leaf.setNextLeafKey(Pack.NULL_ADDRESS);
-        mapOfTiers.put(address, new WeakMapValue<Long, Strata.Tier>(address, leaf, mapOfTiers, queue));
-        return leaf;
-    }
-
-    public Strata.InnerTier getInnerTier(Strata.Structure structure, Object txn, Object key)
-    {
-        collect();
-
-        long address = (Long) key;
-
-        if (address == 0L)
-        {
-            return null;
-        }
-
-        synchronized (this)
-        {
-            Strata.InnerTier inner = (Strata.InnerTier) getCached(address);
-
-            if (inner == null)
-            {
-                Pack.Mutator mutator = ((MutatorServer) txn).getMutator();
-
-                ByteBuffer in = mutator.read(address);
-                short typeOfChildren = in.getShort();
-
-                inner = new Strata.InnerTier(structure, key, typeOfChildren);
-
-                int size = in.getInt();
-                if (size != 0)
-                {
-                    long keyOfTier = in.getLong();
-                    inner.add(txn, keyOfTier, null);
-                    for (int j = 0; j < schema.getRecordSize(); j++)
-                    {
-                        in.get();
-                    }
-                }
-                for (int i = 1; i < size; i++)
-                {
-                    long keyOfTier = in.getLong();
-                    Object object = schema.getReader().read(in);
-                    inner.add(txn, keyOfTier, object);
-                }
-
-                mapOfTiers.put(address, new WeakMapValue<Long, Strata.Tier>(address, inner, mapOfTiers, queue));
-            }
-
-            return inner;
-        }
-    }
-
-    public Strata.LeafTier getLeafTier(Strata.Structure structure, Object txn, Object key)
-    {
-        collect();
-
-        long address = (Long) key;
-
-        if (address == 0L)
-        {
-            return null;
-        }
-
-        synchronized (this)
-        {
-            Strata.LeafTier leaf = (Strata.LeafTier) getCached(address);
-
-            if (leaf == null)
-            {
-                Pack.Mutator mutator = ((MutatorServer) txn).getMutator();
-                leaf = new Strata.LeafTier(structure, address);
-                ByteBuffer in = mutator.read(address);
-                int size = in.getInt();
-                leaf.setNextLeafKey(in.getLong());
-                for (int i = 0; i < size; i++)
-                {
-                    leaf.add(txn, schema.getReader().read(in));
-                }
-
-                mapOfTiers.put(address, new WeakMapValue<Long, Strata.Tier>(address, leaf, mapOfTiers, queue));
-            }
-
-            return leaf;
-        }
-    }
-
-    public void write(Strata.Structure structure, Object txn, Strata.InnerTier inner)
-    {
-        Pack.Mutator mutator = ((MutatorServer) txn).getMutator();
-
-        long address = (Long) inner.getStorageData();
-        ByteBuffer out = mutator.read(address);
-
-        out.putShort(inner.getChildType());
-        out.putInt(inner.getSize() + 1);
-
-        for (int i = 0; i < inner.getSize() + 1; i++)
-        {
-            Strata.Branch branch = inner.get(i);
-
-            if (!(branch.getRightKey() instanceof Long))
-            {
-                System.out.println(branch.getRightKey());
-            }
-
-            long addressOfChild = (Long) branch.getRightKey();
-            out.putLong(addressOfChild);
-
-            if (branch.isMinimal())
-            {
-                for (int j = 0; j < schema.getRecordSize(); j++)
-                {
-                    out.put((byte) 0);
-                }
-            }
-            else
-            {
-                schema.getWriter().write(out, branch.getPivot());
-            }
-        }
-
-        // for (int i = inner.getSize() + 1; i < structure.getSize() + 1; i++)
-        // {
-        // out.putLong(0L);
-        // out.putInt(0);
-        //
-        // for (int j = 0; j < recordSize; j++)
-        // {
-        // out.put((byte) 0);
-        // }
-        // }
-
-        out.clear();
-        
-        mutator.write(address, out);
-    }
-
-    public void write(Strata.Structure structure, Object txn, Strata.LeafTier leaf)
-    {
-        Pack.Mutator mutator = ((MutatorServer) txn).getMutator();
-
-        long address = (Long) leaf.getStorageData();
-        ByteBuffer out = mutator.read(address);
-        
-        out.putInt(leaf.getSize());
-
-        long addressOfNext = (Long) leaf.getNextLeafKey();
-        out.putLong(addressOfNext);
-
-        for (int i = 0; i < leaf.getSize(); i++)
-        {
-            schema.getWriter().write(out, structure.getObjectKey(leaf.get(i)));
-        }
-
-        // for (int i = leaf.getSize(); i < structure.getSize(); i++)
-        // {
-        // for (int j = 0; j < recordSize; j++)
-        // {
-        // out.put((byte) 0);
-        // }
-        // }
-
-        out.flip();
-        
-        mutator.write(address, out);
-    }
-
-    public void free(Strata.Structure structure, Object txn, Strata.InnerTier inner)
-    {
-        Pack.Mutator mutator = ((MutatorServer) txn).getMutator();
-        long address = (Long) inner.getStorageData();
-        mutator.free(address);
-    }
-
-    public void free(Strata.Structure structure, Object txn, Strata.LeafTier leaf)
-    {
-        Pack.Mutator mutator = ((MutatorServer) txn).getMutator();
-        long address = (Long) leaf.getStorageData();
-        mutator.free(address);
+        this.branchStore = new Store<Branch>(structure, new BranchReader(), new BranchWriter(), structure.getSchema().getInnerSize(), SIZEOF_LONG * 2);
+        this.leafStore = new Store<T>(structure, schema.getReader(), schema.getWriter(), structure.getSchema().getLeafSize(), schema.getRecordSize());
     }
 
     public void commit(Object txn)
@@ -230,87 +42,208 @@ implements Strata.Storage, Serializable
         Pack.Mutator mutator = ((MutatorServer) txn).getMutator();
         mutator.commit();
     }
-
-    public Object getKey(Strata.Tier leaf)
+    
+    public Strata.Store<Branch> getBranchStore()
     {
-        return leaf.getStorageData();
+        return branchStore;
+    }
+    
+    public Strata.Store<T> getLeafStore()
+    {
+        return leafStore;
+    }
+    
+    public Strata.Storage.Schema<T> newSchema()
+    {
+        return new Schema<T>(schema);
     }
 
-    public Object getNullKey()
+    final static class FossilIdentifier<T>
+    implements Strata.Identifier<T>
     {
-        return Pack.NULL_ADDRESS;
-    }
-
-    public boolean isKeyNull(Object object)
-    {
-        return Pack.NULL_ADDRESS == (Long) object;
-    }
-
-    public Strata.Storage.Schema getSchema()
-    {
-        return new Schema(schema);
-    }
-
-    private synchronized void collect()
-    {
-        Queueable reference = null;
-        while ((reference = (Queueable) queue.poll()) != null)
+        public Object getKey(Tier<T> tier)
         {
-            reference.dequeue();
+            return tier.getStorageData();
+        }
+
+        public Object getNullKey()
+        {
+            return (Long) 0L;
+        }
+
+        public boolean isKeyNull(Object object)
+        {
+            return ((Long) object) == 0L;
         }
     }
 
-    private Strata.Tier getCached(Object key)
+    public final static class Store<T>
+    implements Strata.Store<T>
     {
-        WeakMapValue<Long, Strata.Tier> reference = mapOfTiers.get(key);
-        if (reference != null)
+        private static final long serialVersionUID = 20080622L;
+
+        private final Strata.Structure structure;
+
+        private final Fossil.Reader<T> reader;
+
+        private final Fossil.Writer<T> writer;
+
+        private final int recordSize;
+
+        private final int tierSize;
+
+        private transient Map<Long, WeakMapValue<Long, Strata.Tier<T>>> mapOfTiers = new HashMap<Long, WeakMapValue<Long, Strata.Tier<T>>>();
+
+        private transient ReferenceQueue<Strata.Tier<T>> queue = new ReferenceQueue<Strata.Tier<T>>();
+
+        public Store(Strata.Structure structure, Fossil.Reader<T> reader, Fossil.Writer<T> writer, int tierSize, int recordSize)
         {
-            return reference.get();
+            this.structure = structure;
+            this.reader = reader;
+            this.writer = writer;
+            this.tierSize = tierSize;
+            this.recordSize = recordSize;
         }
-        return null;
+        
+        public Identifier<T> getIdentifier()
+        {
+            return new FossilIdentifier<T>();
+        }
+
+        public Strata.Tier<T> newTier(Object txn)
+        {
+            collect();
+
+            Pack.Mutator mutator = ((MutatorServer) txn).getMutator();
+            int blockSize = SIZEOF_INT + SIZEOF_LONG + (recordSize * tierSize);
+            long address = mutator.allocate(blockSize);
+            Strata.Tier<T> tier = new Strata.Tier<T>(structure, new FossilIdentifier<T>(), address, tierSize);
+            mapOfTiers.put(address, new WeakMapValue<Long, Strata.Tier<T>>(address, tier, mapOfTiers, queue));
+
+            return tier;
+        }
+
+        private synchronized void collect()
+        {
+            Queueable reference = null;
+            while ((reference = (Queueable) queue.poll()) != null)
+            {
+                reference.dequeue();
+            }
+        }
+
+        public Tier<T> getTier(Object txn, Object key)
+        {
+            collect();
+
+            long address = (Long) key;
+
+            if (address == 0L)
+            {
+                return null;
+            }
+
+            synchronized (this)
+            {
+                Strata.Tier<T> tier = getCached(address);
+
+                if (tier == null)
+                {
+                    Pack.Mutator mutator = ((MutatorServer) txn).getMutator();
+                    tier = new Strata.Tier<T>(structure, new FossilIdentifier<T>(), address, tierSize);
+                    ByteBuffer in = mutator.read(address);
+                    int size = in.getInt();
+                    tier.setValue(in.getLong());
+                    for (int i = 0; i < size; i++)
+                    {
+                        tier.add(reader.read(in));
+                    }
+
+                    mapOfTiers.put(address, new WeakMapValue<Long, Strata.Tier<T>>(address, tier, mapOfTiers, queue));
+                }
+
+                return tier;
+            }
+        }
+
+        private Strata.Tier<T> getCached(Object key)
+        {
+            WeakMapValue<Long, Strata.Tier<T>> reference = mapOfTiers.get(key);
+            if (reference != null)
+            {
+                return reference.get();
+            }
+            return null;
+        }
+
+        public void write(Object txn, Tier<T> tier)
+        {
+            Pack.Mutator mutator = ((MutatorServer) txn).getMutator();
+
+            long address = (Long) tier.getStorageData();
+            ByteBuffer out = mutator.read(address);
+
+            out.putInt(tier.size());
+
+            out.putLong((Long) tier.getValue());
+
+            for (int i = 0; i < tier.size(); i++)
+            {
+                writer.write(out, tier.get(i));
+            }
+
+            out.flip();
+
+            mutator.write(address, out);
+        }
+
+        public void free(Object txn, Tier<T> tier)
+        {
+            Pack.Mutator mutator = ((MutatorServer) txn).getMutator();
+            long address = (Long) tier.getStorageData();
+            mutator.free(address);
+        }
     }
 
-    public final static class Schema
-    implements Strata.Storage.Schema, Serializable
+    public final static class Schema<T>
+    implements Strata.Storage.Schema<T>, Serializable
     {
         private static final long serialVersionUID = 20071018L;
 
-        private Reader reader;
+        private Reader<T> reader;
 
-        private Writer writer;
+        private Writer<T> writer;
 
         private int recordSize;
 
         public Schema()
         {
-            this.reader = new PackAddressReader();
-            this.writer = new PackAddressWriter();
             this.recordSize = 8;
         }
 
-        public Schema(Schema schema)
+        public Schema(Schema<T> schema)
         {
             this.reader = schema.reader;
             this.writer = schema.writer;
             this.recordSize = schema.recordSize;
         }
 
-        public void setReader(Reader reader)
+        public void setReader(Reader<T> reader)
         {
             this.reader = reader;
         }
 
-        public Reader getReader()
+        public Reader<T> getReader()
         {
             return reader;
         }
 
-        public void setWriter(Writer writer)
+        public void setWriter(Writer<T> writer)
         {
             this.writer = writer;
         }
 
-        public Writer getWriter()
+        public Writer<T> getWriter()
         {
             return writer;
         }
@@ -325,9 +258,9 @@ implements Strata.Storage, Serializable
             this.recordSize = recordSize;
         }
 
-        public Storage newStorage()
+        public Strata.Storage<T> newStorage(Strata.Structure structure, Object txn)
         {
-            return new Fossil(this);
+            return new Fossil<T>(structure, this);
         }
     }
 
@@ -357,32 +290,49 @@ implements Strata.Storage, Serializable
         }
     }
 
-    public interface Reader
+    public interface Reader<T>
     {
-        public Object read(ByteBuffer bytes);
+        public T read(ByteBuffer bytes);
     }
 
-    public interface Writer
+    public interface Writer<T>
     {
-        public void write(ByteBuffer bytes, Object object);
+        public void write(ByteBuffer bytes, T object);
     }
 
     public final static class PackAddressWriter
-    implements Writer
+    implements Writer<Long>
     {
-        public void write(ByteBuffer out, Object object)
+        public void write(ByteBuffer out, Long address)
         {
-            long address = ((Long) object).longValue();
             out.putLong(address);
         }
     }
 
     public final static class PackAddressReader
-    implements Reader
+    implements Reader<Long>
     {
-        public Object read(ByteBuffer in)
+        public Long read(ByteBuffer in)
         {
-            return new Long(in.getLong());
+            return in.getLong();
+        }
+    }
+
+    public final static class BranchWriter
+    implements Writer<Strata.Branch>
+    {
+        public void write(ByteBuffer bytes, Strata.Branch branch)
+        {
+
+        }
+    }
+    
+    public final static class BranchReader
+    implements Reader<Strata.Branch>
+    {
+        public Branch read(ByteBuffer bytes)
+        {
+            return null;
         }
     }
 }
