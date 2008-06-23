@@ -6,11 +6,12 @@ import java.util.Collection;
 
 import com.agtrz.pack.Pack;
 import com.agtrz.pack.Pack.Mutator;
+import com.agtrz.strata.redux.Strata;
 
 public class Fossil
 {
     public final static class Store<H, T>
-    implements com.agtrz.strata.Store<Long, H, T, Pack.Mutator>
+    implements Strata.Store<Long, H, T, Pack.Mutator>
     {
         private static final long serialVersionUID = 1L;
 
