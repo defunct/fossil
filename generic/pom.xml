@@ -4,11 +4,11 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.agtrz</groupId>
-    <artifactId>fossil</artifactId>
+    <artifactId>fossil-generic</artifactId>
     <packaging>jar</packaging>
     <version>0.1</version>
 
-    <name>fossil</name>
+    <name>fossil-generic</name>
     <description>A B-Tree storage using Pack.</description>
 
     <organization>
