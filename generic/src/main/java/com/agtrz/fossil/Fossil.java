@@ -6,9 +6,6 @@ import java.nio.ByteBuffer;
 import com.agtrz.pack.Pack;
 import com.agtrz.pack.Pack.Mutator;
 import com.agtrz.strata.Strata;
-import com.agtrz.strata.Strata.Cooper;
-import com.agtrz.strata.Strata.Extractor;
-import com.agtrz.strata.Strata.LeafTier;
 
 public class Fossil
 {
@@ -39,9 +36,9 @@ public class Fossil
         }
 
         // FIXME Load into a leaf tier, do not return one.
-        public <B> LeafTier<B, Long> load(Pack.Mutator mutator, Long address, Strata.Cooper<T, B, Mutator> cooper, Strata.Extractor<T, Pack.Mutator> extractor)
+        public <B> Strata.LeafTier<B, Long> load(Pack.Mutator mutator, Long address, Strata.Cooper<T, B, Mutator> cooper, Strata.Extractor<T, Pack.Mutator> extractor)
         {
-            LeafTier<B, Long> leaf = new Strata.LeafTier<B, Long>();
+            Strata.LeafTier<B, Long> leaf = new Strata.LeafTier<B, Long>();
 
             ByteBuffer bytes = mutator.read(address);
             int size = bytes.getInt();
@@ -58,7 +55,7 @@ public class Fossil
             return leaf;
         }
         
-        public <B> void write(Pack.Mutator mutator, LeafTier<B, Long> leaf, Strata.Cooper<T, B, Mutator> cooper, Strata.Extractor<T, Pack.Mutator> extractor)
+        public <B> void write(Pack.Mutator mutator, Strata.LeafTier<B, Long> leaf, Strata.Cooper<T, B, Mutator> cooper, Strata.Extractor<T, Pack.Mutator> extractor)
         {
             ByteBuffer bytes = ByteBuffer.allocate(getSize(leaf.size()));
             
@@ -98,7 +95,7 @@ public class Fossil
             return mutator.allocate(getSize(size));
         }
         
-        public <B> Strata.InnerTier<B, Long> load(Pack.Mutator mutator, Long address,  Cooper<T, B, Mutator> cooper, Extractor<T, Mutator> extractor)
+        public <B> Strata.InnerTier<B, Long> load(Pack.Mutator mutator, Long address, Strata.Cooper<T, B, Mutator> cooper, Strata.Extractor<T, Mutator> extractor)
         {
             Strata.InnerTier<B, Long> inner = new Strata.InnerTier<B, Long>();
             ByteBuffer bytes = mutator.read(address);
@@ -115,7 +112,7 @@ public class Fossil
             return inner;
         }
         
-        public <B> void write(Pack.Mutator mutator, Strata.InnerTier<B, Long> inner, Cooper<T, B, Mutator> cooper, Extractor<T, Mutator> extractor)
+        public <B> void write(Pack.Mutator mutator, Strata.InnerTier<B, Long> inner, Strata.Cooper<T, B, Mutator> cooper, Strata.Extractor<T, Mutator> extractor)
         {
             ByteBuffer bytes = ByteBuffer.allocate(getSize(inner.size()));
             bytes.putInt(inner.size());
@@ -182,6 +179,31 @@ public class Fossil
         public void write(ByteBuffer bytes, T object);
         
         public int getSize();
+    }
+    
+    private final static class StorageBuilder<T>
+    implements Strata.StorageBuilder<T, Pack.Mutator>
+    {
+        private final RecordIO<T> recordIO;
+        
+        public StorageBuilder(RecordIO<T> recordIO)
+        {
+            this.recordIO = recordIO;
+        }
+
+        public Strata.Transaction<T, Pack.Mutator> newTransaction(Pack.Mutator txn, Strata.Schema<T, Pack.Mutator> schema)
+        {
+            return schema.newTransaction(txn, new Storage<T>(recordIO));
+        }
+    }
+    
+    public static <T> Strata.Schema<T, Pack.Mutator> newFossilSchema(RecordIO<T> recordIO)
+    {
+        Strata.Schema<T, Pack.Mutator> schema = new Strata.Schema<T, Pack.Mutator>();
+        schema.setStorageBuilder(new StorageBuilder<T>(recordIO));
+        schema.setAllocatorBuilder(Strata.newStorageAllocatorBuilder());
+        schema.setFieldCaching(true);
+        return schema;
     }
 }
 
