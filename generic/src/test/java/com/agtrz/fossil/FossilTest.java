@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import org.testng.annotations.Test;
+
 import com.agtrz.pack.Pack;
 import com.agtrz.strata.Strata;
 
@@ -53,6 +55,7 @@ public class FossilTest
         return file;
     }
 
+    @Test
     public void create()
     {
         Pack.Creator creator = new Pack.Creator();

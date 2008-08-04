@@ -2,13 +2,11 @@
 <classpath>
 	<classpathentry combineaccessrules="false" kind="src" path="/strata-generic"/>
 	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry excluding="**/*.java" kind="src" output="target/test-classes" path="src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="M2_REPO/junit/junit/4.4/junit-4.4.jar" sourcepath="M2_REPO/junit/junit/4.4/junit-4.4-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/Users/alan/.m2/repository/junit/junit/4.4/junit-4.4-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar" sourcepath="M2_REPO/junit/junit/3.8.1/junit-3.8.1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/agtrz/pack/0.1/pack-0.1.jar" sourcepath="M2_REPO/com/agtrz/pack/0.1/pack-0.1-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:file:/Users/alan/.m2/repository/com/agtrz/pack/0.1/pack-0.1-javadoc.jar!/"/>

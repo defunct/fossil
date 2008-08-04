@@ -121,7 +121,7 @@ public class Fossil
             {
                 T object = cooper.getObject(inner.get(i).getPivot());
                 recordIO.write(bytes, object);
-                bytes.putLong(inner.get(i).getRightKey());
+                bytes.putLong(inner.get(i).getAddress());
             }
             bytes.flip();
             mutator.write(inner.getAddress(), bytes);
@@ -203,6 +203,8 @@ public class Fossil
         schema.setStorageBuilder(new StorageBuilder<T>(recordIO));
         schema.setAllocatorBuilder(Strata.newStorageAllocatorBuilder());
         schema.setFieldCaching(true);
+        schema.setTierPoolBuilder(Strata.newBasicTierPool());
+        schema.setTierWriterBuilder(Strata.newPerQueryTierWriter(8));
         return schema;
     }
 }
