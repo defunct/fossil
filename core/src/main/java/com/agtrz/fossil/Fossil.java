@@ -68,7 +68,7 @@ implements Strata.Storage<T>, Serializable
 
         public Object getNullKey()
         {
-            return (Long) 0L;
+            return 0L;
         }
 
         public boolean isKeyNull(Object object)

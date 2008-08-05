@@ -55,8 +55,8 @@
         </dependency>
         <dependency>
             <groupId>com.agtrz</groupId>
-            <artifactId>strata</artifactId>
-            <version>0.1</version>
+            <artifactId>strata-generic</artifactId>
+            <version>0.2</version>
         </dependency>
     </dependencies>
 
