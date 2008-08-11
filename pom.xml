@@ -4,12 +4,12 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.agtrz</groupId>
-    <artifactId>fossil-generic</artifactId>
+    <artifactId>fossil</artifactId>
     <packaging>jar</packaging>
-    <version>0.1</version>
+    <version>0.2.1</version>
 
-    <name>fossil-generic</name>
-    <description>A B-Tree storage using Pack.</description>
+    <name>fossil</name>
+    <description>B-Tree index storage using Pack.</description>
 
     <organization>
         <name>Alan Gutierrez</name>
@@ -55,8 +55,8 @@
         </dependency>
         <dependency>
             <groupId>com.agtrz</groupId>
-            <artifactId>strata-generic</artifactId>
-            <version>0.2</version>
+            <artifactId>strata</artifactId>
+            <version>0.2.1</version>
         </dependency>
     </dependencies>
 

@@ -1,6 +1,6 @@
 <projectDescription>
-  <name>fossil-generic</name>
-  <comment>A B-Tree storage using Pack.</comment>
+  <name>fossil</name>
+  <comment>B-Tree index storage using Pack.</comment>
   <projects/>
   <buildSpec>
     <buildCommand>
