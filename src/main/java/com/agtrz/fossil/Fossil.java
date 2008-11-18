@@ -35,7 +35,6 @@ public class Fossil
             return mutator.allocate(size);
         }
 
-        // FIXME Load into a leaf tier, do not return one.
         public <B> Strata.LeafTier<B, Long> load(Pack.Mutator mutator, Long address, Strata.Cooper<T, B, Mutator> cooper, Strata.Extractor<T, Pack.Mutator> extractor)
         {
             Strata.LeafTier<B, Long> leaf = new Strata.LeafTier<B, Long>();
