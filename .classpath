@@ -5,15 +5,11 @@
   <classpathentry kind="output" path="target/classes"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar" sourcepath="M2_REPO/junit/junit/3.8.1/junit-3.8.1-sources.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/agtrz/pack/0.1/pack-0.1.jar" sourcepath="M2_REPO/com/agtrz/pack/0.1/pack-0.1-sources.jar">
+  <classpathentry kind="var" path="M2_REPO/com/goodworkalan/pack/0.1.X/pack-0.1.X.jar" sourcepath="M2_REPO/com/goodworkalan/pack/0.1.X/pack-0.1.X-sources.jar">
     <attributes>
-      <attribute value="jar:file:/Users/alan/.m2/repository/com/agtrz/pack/0.1/pack-0.1-javadoc.jar!/" name="javadoc_location"/>
+      <attribute value="jar:file:/Users/alan/.m2/repository/com/goodworkalan/pack/0.1.X/pack-0.1.X-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/com/agtrz/strata/0.2.1/strata-0.2.1.jar" sourcepath="M2_REPO/com/agtrz/strata/0.2.1/strata-0.2.1-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/Users/alan/.m2/repository/com/agtrz/strata/0.2.1/strata-0.2.1-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/goodworkalan/strata/0.1.X/strata-0.1.X.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/testng/testng/5.8/testng-5.8-jdk15.jar"/>
 </classpath>

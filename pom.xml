@@ -3,10 +3,10 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.agtrz</groupId>
+    <groupId>com.goodworkalan</groupId>
     <artifactId>fossil</artifactId>
     <packaging>jar</packaging>
-    <version>0.2.1</version>
+    <version>0.1.X</version>
 
     <name>fossil</name>
     <description>B-Tree index storage using Pack.</description>
@@ -49,14 +49,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.agtrz</groupId>
+            <groupId>com.goodworkalan</groupId>
             <artifactId>pack</artifactId>
-            <version>0.1</version>
+            <version>0.1.X</version>
         </dependency>
         <dependency>
-            <groupId>com.agtrz</groupId>
+            <groupId>com.goodworkalan</groupId>
             <artifactId>strata</artifactId>
-            <version>0.2.1</version>
+            <version>0.1.X</version>
         </dependency>
     </dependencies>
 

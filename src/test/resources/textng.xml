@@ -3,7 +3,7 @@
 <suite name="Fossil Suite" verbose="1" >
   <test name="Unit">
     <packages>
-      <package name="com.agtrz.fossil" />
+      <package name="com.goodworkalan.fossil" />
    </packages>
  </test>
 </suite>

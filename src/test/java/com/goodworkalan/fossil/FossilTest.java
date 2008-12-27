@@ -1,5 +1,5 @@
 /* Copyright Alan Gutierrez 2006 */
-package com.agtrz.fossil;
+package com.goodworkalan.fossil;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,13 +7,19 @@ import java.nio.ByteBuffer;
 
 import org.testng.annotations.Test;
 
-import com.agtrz.pack.Pack;
-import com.agtrz.strata.Strata;
+import com.goodworkalan.fossil.Fossil;
+import com.goodworkalan.fossil.RecordIO;
+import com.goodworkalan.pack.Creator;
+import com.goodworkalan.pack.Mutator;
+import com.goodworkalan.pack.Pack;
+import com.goodworkalan.strata.Extractor;
+import com.goodworkalan.strata.Record;
+import com.goodworkalan.strata.Schema;
 
 public class FossilTest
 {
     public final static class IntegerIO
-    implements Fossil.RecordIO<Integer>
+    implements RecordIO<Integer>
     {
         public void write(ByteBuffer bytes, Integer object)
         {
@@ -32,9 +38,9 @@ public class FossilTest
     }
     
     public final static class IntegerExtractor
-    implements Strata.Extractor<Integer, Pack.Mutator>
+    implements Extractor<Integer, Mutator>
     {
-        public void extract(Pack.Mutator mutator, Integer integer, Strata.Record record)
+        public void extract(Mutator mutator, Integer integer, Record record)
         {
             record.fields(integer);
         }
@@ -58,10 +64,10 @@ public class FossilTest
     @Test
     public void create()
     {
-        Pack.Creator creator = new Pack.Creator();
+        Creator creator = new Creator();
         Pack pack = creator.create(newFile());
-        Pack.Mutator mutator = pack.mutate();
-        Strata.Schema<Integer, Pack.Mutator> schema = Fossil.newFossilSchema(new IntegerIO());
+        Mutator mutator = pack.mutate();
+        Schema<Integer, Mutator> schema = Fossil.newFossilSchema(new IntegerIO());
         schema.setInnerSize(5);
         schema.setLeafSize(5);
         schema.setExtractor(new IntegerExtractor());
