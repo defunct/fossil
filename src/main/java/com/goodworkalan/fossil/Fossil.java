@@ -3,7 +3,7 @@ package com.goodworkalan.fossil;
 
 import com.goodworkalan.pack.Mutator;
 import com.goodworkalan.strata.Schema;
-import com.goodworkalan.strata.Strata;
+import com.goodworkalan.strata.Stratas;
 
 public class Fossil
 {
@@ -18,10 +18,10 @@ public class Fossil
     {
         Schema<T, Mutator> schema = new Schema<T, Mutator>();
         schema.setStorageBuilder(new FossilStorageBuilder<T>(recordIO));
-        schema.setAllocatorBuilder(Strata.newStorageAllocatorBuilder());
+        schema.setAllocatorBuilder(Stratas.newStorageAllocatorBuilder());
         schema.setFieldCaching(true);
-        schema.setTierPoolBuilder(Strata.newBasicTierPool());
-        schema.setTierWriterBuilder(Strata.newPerQueryTierWriter(8));
+        schema.setTierPoolBuilder(Stratas.newBasicTierPool());
+        schema.setTierWriterBuilder(Stratas.newPerQueryTierWriter(8));
         return schema;
     }
 }
