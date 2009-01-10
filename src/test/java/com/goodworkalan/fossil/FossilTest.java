@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 
 import org.testng.annotations.Test;
 
-import com.goodworkalan.favorites.Stash;
+import com.goodworkalan.stash.Stash;
 import com.goodworkalan.pack.Creator;
 import com.goodworkalan.pack.Mutator;
 import com.goodworkalan.pack.Pack;

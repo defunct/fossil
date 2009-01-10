@@ -1,7 +1,7 @@
 /* Copyright Alan Gutierrez 2006 */
 package com.goodworkalan.fossil;
 
-import com.goodworkalan.favorites.Stash;
+import com.goodworkalan.stash.Stash;
 import com.goodworkalan.pack.Mutator;
 import com.goodworkalan.strata.Schema;
 import com.goodworkalan.strata.Stratas;

@@ -2,7 +2,7 @@ package com.goodworkalan.fossil;
 
 import java.nio.ByteBuffer;
 
-import com.goodworkalan.favorites.Stash;
+import com.goodworkalan.stash.Stash;
 import com.goodworkalan.pack.Mutator;
 import com.goodworkalan.strata.Cooper;
 import com.goodworkalan.strata.Extractor;

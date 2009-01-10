@@ -1,6 +1,6 @@
 package com.goodworkalan.fossil;
 
-import com.goodworkalan.favorites.Stash;
+import com.goodworkalan.stash.Stash;
 import com.goodworkalan.pack.Mutator;
 import com.goodworkalan.strata.InnerStore;
 import com.goodworkalan.strata.LeafStore;

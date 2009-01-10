@@ -1,6 +1,6 @@
 package com.goodworkalan.fossil;
 
-import com.goodworkalan.favorites.Stash;
+import com.goodworkalan.stash.Stash;
 import com.goodworkalan.strata.Query;
 import com.goodworkalan.strata.Schema;
 import com.goodworkalan.strata.StorageBuilder;
