@@ -1,35 +1,37 @@
 package com.goodworkalan.fossil;
 
+import com.goodworkalan.favorites.Stash;
 import com.goodworkalan.pack.Mutator;
 import com.goodworkalan.strata.InnerStore;
 import com.goodworkalan.strata.LeafStore;
 import com.goodworkalan.strata.Storage;
 
-public final class FossilStorage<T>
-implements Storage<T, Long, Mutator>
+public final class FossilStorage<T, F extends Comparable<F>>
+implements Storage<T, F, Long>
 {
-    private final InnerStore<T, Long, Mutator> innerStore;
+    private final InnerStore<T, F, Long> innerStore;
     
-    private final LeafStore<T, Long, Mutator> leafStore;
+    private final LeafStore<T, F, Long> leafStore;
     
     public FossilStorage(RecordIO<T> recordIO)
     {
-        this.innerStore = new InnerFossil<T>(recordIO);
-        this.leafStore = new FossilLeafStore<T>(recordIO);
+        this.innerStore = new InnerFossil<T, F>(recordIO);
+        this.leafStore = new FossilLeafStore<T, F>(recordIO);
     }
     
-    public InnerStore<T, Long, Mutator> getInnerStore()
+    public InnerStore<T, F, Long> getInnerStore()
     {
         return innerStore;
     }
     
-    public LeafStore<T, Long, Mutator> getLeafStore()
+    public LeafStore<T, F, Long> getLeafStore()
     {
         return leafStore;
     }
 
-    public void commit(Mutator mutator)
+    public void commit(Stash stash)
     {
+        Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);
         mutator.commit();
     }
     

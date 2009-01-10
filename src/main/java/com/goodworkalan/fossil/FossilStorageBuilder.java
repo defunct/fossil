@@ -1,12 +1,12 @@
 package com.goodworkalan.fossil;
 
-import com.goodworkalan.pack.Mutator;
+import com.goodworkalan.favorites.Stash;
+import com.goodworkalan.strata.Query;
 import com.goodworkalan.strata.Schema;
 import com.goodworkalan.strata.StorageBuilder;
-import com.goodworkalan.strata.Transaction;
 
-public class FossilStorageBuilder<T>
-implements StorageBuilder<T, Mutator>
+public class FossilStorageBuilder<T, F extends Comparable<F>>
+implements StorageBuilder<T, F>
 {
     private final RecordIO<T> recordIO;
     
@@ -15,8 +15,8 @@ implements StorageBuilder<T, Mutator>
         this.recordIO = recordIO;
     }
 
-    public Transaction<T, Mutator> newTransaction(Mutator txn, Schema<T, Mutator> schema)
+    public Query<T, F> newTransaction(Stash stash, Schema<T, F> schema)
     {
-        return schema.newTransaction(txn, new FossilStorage<T>(recordIO));
+        return schema.newTransaction(stash, new FossilStorage<T, F>(recordIO));
     }
 }

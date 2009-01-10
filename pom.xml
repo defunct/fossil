@@ -50,6 +50,11 @@
         </dependency>
         <dependency>
             <groupId>com.goodworkalan</groupId>
+            <artifactId>stash</artifactId>
+            <version>0.1.X</version>
+        </dependency>
+        <dependency>
+            <groupId>com.goodworkalan</groupId>
             <artifactId>pack</artifactId>
             <version>0.1.X</version>
         </dependency>

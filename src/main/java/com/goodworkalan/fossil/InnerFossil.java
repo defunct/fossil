@@ -2,6 +2,7 @@ package com.goodworkalan.fossil;
 
 import java.nio.ByteBuffer;
 
+import com.goodworkalan.favorites.Stash;
 import com.goodworkalan.pack.Mutator;
 import com.goodworkalan.strata.Branch;
 import com.goodworkalan.strata.ChildType;
@@ -10,8 +11,9 @@ import com.goodworkalan.strata.Extractor;
 import com.goodworkalan.strata.InnerStore;
 import com.goodworkalan.strata.InnerTier;
 
-public final class InnerFossil<T>
-implements InnerStore<T, Long, Mutator>
+// TODO Rename FossilInnerStore. 
+public final class InnerFossil<T, F extends Comparable<F>>
+implements InnerStore<T, F, Long>
 {    
     private final RecordIO<T> recordIO;
     
@@ -25,13 +27,16 @@ implements InnerStore<T, Long, Mutator>
         return Fossil.SIZEOF_INTEGER + Fossil.SIZEOF_SHORT + (size * (recordIO.getSize() + Fossil.SIZEOF_LONG));
     }
 
-    public Long allocate(Mutator mutator, int size)
+    public Long allocate(Stash stash, int size)
     {
+        Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);
         return mutator.allocate(getSize(size));
     }
     
-    public <B> InnerTier<B, Long> load(Mutator mutator, Long address, Cooper<T, B, Mutator> cooper, Extractor<T, Mutator> extractor)
+    public <B> InnerTier<B, Long> load(Stash stash, Long address, Cooper<T, F, B> cooper, Extractor<T, F> extractor)
     {
+        Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);
+
         InnerTier<B, Long> inner = new InnerTier<B, Long>();
         ByteBuffer bytes = mutator.read(address);
         int size = bytes.getInt();
@@ -41,14 +46,16 @@ implements InnerStore<T, Long, Mutator>
         {
             T object = recordIO.read(bytes);
             Long childAddress = bytes.getLong();
-            B bucket = cooper.newBucket(mutator, extractor, object);
+            B bucket = cooper.newBucket(stash, extractor, object);
             inner.add(new Branch<B, Long>(bucket, childAddress));
         }
         return inner;
     }
     
-    public <B> void write(Mutator mutator, InnerTier<B, Long> inner, Cooper<T, B, Mutator> cooper, Extractor<T, Mutator> extractor)
+    public <B> void write(Stash stash, InnerTier<B, Long> inner, Cooper<T, F, B> cooper, Extractor<T, F> extractor)
     {
+        Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);
+
         ByteBuffer bytes = ByteBuffer.allocate(getSize(inner.size()));
         bytes.putInt(inner.size());
         bytes.putShort(inner.getChildType() == ChildType.INNER ? (short) 1 : (short) 2);
@@ -62,8 +69,9 @@ implements InnerStore<T, Long, Mutator>
         mutator.write(inner.getAddress(), bytes);
     }
     
-    public void free(Mutator mutator, Long address)
+    public void free(Stash stash, Long address)
     {
+        Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);
         mutator.free(address);
     }
 }

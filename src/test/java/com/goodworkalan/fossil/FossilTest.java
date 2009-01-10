@@ -7,13 +7,11 @@ import java.nio.ByteBuffer;
 
 import org.testng.annotations.Test;
 
-import com.goodworkalan.fossil.Fossil;
-import com.goodworkalan.fossil.RecordIO;
+import com.goodworkalan.favorites.Stash;
 import com.goodworkalan.pack.Creator;
 import com.goodworkalan.pack.Mutator;
 import com.goodworkalan.pack.Pack;
 import com.goodworkalan.strata.Extractor;
-import com.goodworkalan.strata.Record;
 import com.goodworkalan.strata.Schema;
 
 public class FossilTest
@@ -38,11 +36,11 @@ public class FossilTest
     }
     
     public final static class IntegerExtractor
-    implements Extractor<Integer, Mutator>
+    implements Extractor<Integer, Integer>
     {
-        public void extract(Mutator mutator, Integer integer, Record record)
+        public Integer extract(Stash stash, Integer integer)
         {
-            record.fields(integer);
+            return integer;
         }
     }
     
@@ -67,11 +65,11 @@ public class FossilTest
         Creator creator = new Creator();
         Pack pack = creator.create(newFile());
         Mutator mutator = pack.mutate();
-        Schema<Integer, Mutator> schema = Fossil.newFossilSchema(new IntegerIO());
+        Schema<Integer, Integer> schema = Fossil.newFossilSchema(new IntegerIO());
         schema.setInnerSize(5);
         schema.setLeafSize(5);
         schema.setExtractor(new IntegerExtractor());
-        schema.newTransaction(mutator);        
+        schema.newTransaction(Fossil.initialize(new Stash(), mutator));        
     }
 }
 

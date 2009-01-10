@@ -10,6 +10,15 @@
       <attribute value="jar:file:/Users/alan/.m2/repository/com/goodworkalan/pack/0.1.X/pack-0.1.X-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/com/goodworkalan/strata/0.1.X/strata-0.1.X.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/goodworkalan/stash/0.1.X/stash-0.1.X.jar" sourcepath="M2_REPO/com/goodworkalan/stash/0.1.X/stash-0.1.X-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/alan/.m2/repository/com/goodworkalan/stash/0.1.X/stash-0.1.X-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/goodworkalan/strata/0.1.X/strata-0.1.X.jar" sourcepath="M2_REPO/com/goodworkalan/strata/0.1.X/strata-0.1.X-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/alan/.m2/repository/com/goodworkalan/strata/0.1.X/strata-0.1.X-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
   <classpathentry kind="var" path="M2_REPO/org/testng/testng/5.8/testng-5.8-jdk15.jar"/>
 </classpath>
