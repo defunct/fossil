@@ -15,7 +15,7 @@ implements Storage<T, F, Long>
     
     public FossilStorage(RecordIO<T> recordIO)
     {
-        this.innerStore = new InnerFossil<T, F>(recordIO);
+        this.innerStore = new FossilInnerStore<T, F>(recordIO);
         this.leafStore = new FossilLeafStore<T, F>(recordIO);
     }
     

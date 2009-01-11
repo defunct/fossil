@@ -11,13 +11,12 @@ import com.goodworkalan.strata.Extractor;
 import com.goodworkalan.strata.InnerStore;
 import com.goodworkalan.strata.InnerTier;
 
-// TODO Rename FossilInnerStore. 
-public final class InnerFossil<T, F extends Comparable<F>>
+public final class FossilInnerStore<T, F extends Comparable<F>>
 implements InnerStore<T, F, Long>
 {    
     private final RecordIO<T> recordIO;
     
-    public InnerFossil(RecordIO<T> recordIO)
+    public FossilInnerStore(RecordIO<T> recordIO)
     {
         this.recordIO = recordIO;
     }
