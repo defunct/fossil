@@ -22,10 +22,9 @@ public class Fossil
         return stash;
     }
     
-    public static <T, F extends Comparable<F>> Schema<T, F> newFossilSchema(RecordIO<T> recordIO)
+    public static <T, F extends Comparable<F>> Schema<T, F> newFossilSchema()
     {
         Schema<T, F> schema = new Schema<T, F>();
-        schema.setStorageBuilder(new FossilStorageBuilder<T, F>(recordIO));
         schema.setAllocatorBuilder(Stratas.newStorageAllocatorBuilder());
         schema.setFieldCaching(true);
         schema.setTierPoolBuilder(Stratas.newBasicTierPool());

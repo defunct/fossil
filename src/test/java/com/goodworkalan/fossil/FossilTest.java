@@ -65,11 +65,11 @@ public class FossilTest
         Creator creator = new Creator();
         Pack pack = creator.create(newFile());
         Mutator mutator = pack.mutate();
-        Schema<Integer, Integer> schema = Fossil.newFossilSchema(new IntegerIO());
+        Schema<Integer, Integer> schema = Fossil.newFossilSchema();
         schema.setInnerSize(5);
         schema.setLeafSize(5);
         schema.setExtractor(new IntegerExtractor());
-        schema.newTransaction(Fossil.initialize(new Stash(), mutator));        
+        schema.create(Fossil.initialize(new Stash(), mutator), new FossilStorage<Integer, Integer>(new IntegerIO()));        
     }
 }
 

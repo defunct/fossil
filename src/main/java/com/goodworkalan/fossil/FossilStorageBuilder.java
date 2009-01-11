@@ -15,8 +15,8 @@ implements StorageBuilder<T, F>
         this.recordIO = recordIO;
     }
 
-    public Query<T, F> newTransaction(Stash stash, Schema<T, F> schema)
+    public Query<T, F> create(Stash stash, Schema<T, F> schema)
     {
-        return schema.newTransaction(stash, new FossilStorage<T, F>(recordIO));
+        return schema.create(stash, new FossilStorage<T, F>(recordIO)).getQuery();
     }
 }
