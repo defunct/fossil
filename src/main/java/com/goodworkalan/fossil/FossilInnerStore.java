@@ -11,7 +11,7 @@ import com.goodworkalan.strata.Extractor;
 import com.goodworkalan.strata.InnerStore;
 import com.goodworkalan.strata.InnerTier;
 
-public final class FossilInnerStore<T, F extends Comparable<F>>
+public final class FossilInnerStore<T, F extends Comparable<? super F>>
 implements InnerStore<T, F, Long>
 {    
     private final RecordIO<T> recordIO;

@@ -6,7 +6,7 @@ import com.goodworkalan.strata.InnerStore;
 import com.goodworkalan.strata.LeafStore;
 import com.goodworkalan.strata.Storage;
 
-public final class FossilStorage<T, F extends Comparable<F>>
+public final class FossilStorage<T, F extends Comparable<? super F>>
 implements Storage<T, F, Long>
 {
     private final InnerStore<T, F, Long> innerStore;

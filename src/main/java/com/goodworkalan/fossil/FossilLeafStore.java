@@ -9,7 +9,7 @@ import com.goodworkalan.strata.Extractor;
 import com.goodworkalan.strata.LeafStore;
 import com.goodworkalan.strata.LeafTier;
 
-public class FossilLeafStore<T, F extends Comparable<F>>
+public class FossilLeafStore<T, F extends Comparable<? super F>>
 implements LeafStore<T, F, Long>
 {
     private final RecordIO<T> recordIO;

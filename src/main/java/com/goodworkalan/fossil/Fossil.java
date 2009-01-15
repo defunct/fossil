@@ -22,7 +22,7 @@ public class Fossil
         return stash;
     }
     
-    public static <T, F extends Comparable<F>> Schema<T, F> newFossilSchema()
+    public static <T, F extends Comparable<? super F>> Schema<T, F> newFossilSchema()
     {
         Schema<T, F> schema = new Schema<T, F>();
         schema.setAllocatorBuilder(Stratas.newStorageAllocatorBuilder());

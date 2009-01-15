@@ -5,7 +5,7 @@ import com.goodworkalan.strata.Query;
 import com.goodworkalan.strata.Schema;
 import com.goodworkalan.strata.StorageBuilder;
 
-public class FossilStorageBuilder<T, F extends Comparable<F>>
+public class FossilStorageBuilder<T, F extends Comparable<? super F>>
 implements StorageBuilder<T, F>
 {
     private final RecordIO<T> recordIO;
