@@ -2,7 +2,9 @@
 package com.goodworkalan.fossil;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 
 import org.testng.annotations.Test;
@@ -60,10 +62,11 @@ public class FossilTest
     }
 
     @Test
-    public void create()
+    public void create() throws FileNotFoundException
     {
+        File file = newFile();
         Creator creator = new Creator();
-        Pack pack = creator.create(newFile());
+        Pack pack = creator.create(new RandomAccessFile(file, "rw").getChannel());
         Mutator mutator = pack.mutate();
         Schema<Integer, Integer> schema = Fossil.newFossilSchema();
         schema.setInnerSize(5);
