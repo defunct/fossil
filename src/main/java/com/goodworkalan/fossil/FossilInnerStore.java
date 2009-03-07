@@ -11,27 +11,33 @@ import com.goodworkalan.strata.Extractor;
 import com.goodworkalan.strata.InnerStore;
 import com.goodworkalan.strata.InnerTier;
 
+// TODO Document.
 public final class FossilInnerStore<T, F extends Comparable<? super F>>
 implements InnerStore<T, F, Long>
 {    
+    // TODO Document.
     private final RecordIO<T> recordIO;
     
+    // TODO Document.
     public FossilInnerStore(RecordIO<T> recordIO)
     {
         this.recordIO = recordIO;
     }
     
+    // TODO Document.
     private int getSize(int size)
     {
         return Fossil.SIZEOF_INTEGER + Fossil.SIZEOF_SHORT + (size * (recordIO.getSize() + Fossil.SIZEOF_LONG));
     }
 
+    // TODO Document.
     public Long allocate(Stash stash, int size)
     {
         Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);
         return mutator.allocate(getSize(size));
     }
     
+    // TODO Document.
     public <B> InnerTier<B, Long> load(Stash stash, Long address, Cooper<T, F, B> cooper, Extractor<T, F> extractor)
     {
         Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);
@@ -51,6 +57,7 @@ implements InnerStore<T, F, Long>
         return inner;
     }
     
+    // TODO Document.
     public <B> void write(Stash stash, InnerTier<B, Long> inner, Cooper<T, F, B> cooper, Extractor<T, F> extractor)
     {
         Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);
@@ -68,6 +75,7 @@ implements InnerStore<T, F, Long>
         mutator.write(inner.getAddress(), bytes);
     }
     
+    // TODO Document.
     public void free(Stash stash, Long address)
     {
         Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);

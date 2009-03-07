@@ -5,16 +5,20 @@ import com.goodworkalan.strata.Query;
 import com.goodworkalan.strata.Schema;
 import com.goodworkalan.strata.StorageBuilder;
 
+// TODO Document.
 public class FossilStorageBuilder<T, F extends Comparable<? super F>>
 implements StorageBuilder<T, F>
 {
+    // TODO Document.
     private final RecordIO<T> recordIO;
     
+    // TODO Document.
     public FossilStorageBuilder(RecordIO<T> recordIO)
     {
         this.recordIO = recordIO;
     }
 
+    // TODO Document.
     public Query<T, F> create(Stash stash, Schema<T, F> schema)
     {
         return schema.create(stash, new FossilStorage<T, F>(recordIO)).getQuery();
