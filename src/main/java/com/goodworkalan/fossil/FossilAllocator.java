@@ -53,7 +53,7 @@ public class FossilAllocator<T> implements Allocator<T, Long>
     }
     
     // TODO Document.
-    public void dirty(Stash stash, InnerTier<T, Long> inner)
+    public void write(Stash stash, InnerTier<T, Long> inner)
     {
         Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);
 
@@ -72,7 +72,7 @@ public class FossilAllocator<T> implements Allocator<T, Long>
     }
     
     // TODO Document.
-    public void remove(Stash stash, InnerTier<T, Long> inner)
+    public void free(Stash stash, InnerTier<T, Long> inner)
     {
         Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);
         mutator.free(inner.getAddress());
@@ -109,7 +109,7 @@ public class FossilAllocator<T> implements Allocator<T, Long>
     }
     
     // TODO Document.
-    public void dirty(Stash stash, LeafTier<T, Long> leaf)
+    public void write(Stash stash, LeafTier<T, Long> leaf)
     {
         Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);
 
@@ -126,7 +126,7 @@ public class FossilAllocator<T> implements Allocator<T, Long>
     }
     
     // TODO Document.
-    public void remove(Stash stash, LeafTier<T, Long> leaf)
+    public void free(Stash stash, LeafTier<T, Long> leaf)
     {
         Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);
         mutator.free(leaf.getAddress());
