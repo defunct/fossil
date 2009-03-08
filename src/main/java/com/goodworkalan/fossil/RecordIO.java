@@ -6,10 +6,10 @@ import java.nio.ByteBuffer;
 public interface RecordIO<T>
 {
     // TODO Document.
-    public T read(ByteBuffer bytes);
+    public T read(ByteBuffer byteBuffer);
     
     // TODO Document.
-    public void write(ByteBuffer bytes, T object);
+    public void write(ByteBuffer byteBuffer, T object);
     
     // TODO Document.
     public int getSize();

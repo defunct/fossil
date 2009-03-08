@@ -1,10 +1,8 @@
 /* Copyright Alan Gutierrez 2006 */
 package com.goodworkalan.fossil;
 
-import com.goodworkalan.stash.Stash;
 import com.goodworkalan.pack.Mutator;
-import com.goodworkalan.strata.Schema;
-import com.goodworkalan.strata.Stratas;
+import com.goodworkalan.stash.Stash;
 
 // TODO Document.
 public class Fossil
@@ -28,15 +26,9 @@ public class Fossil
         return stash;
     }
     
-    // TODO Document.
-    public static <T, F extends Comparable<? super F>> Schema<T, F> newFossilSchema()
+    public static Stash newStash(Mutator mutator)
     {
-        Schema<T, F> schema = new Schema<T, F>();
-        schema.setAllocatorBuilder(Stratas.newStorageAllocatorBuilder());
-        schema.setFieldCaching(true);
-        schema.setTierPoolBuilder(Stratas.newBasicTierPool());
-        schema.setTierWriterBuilder(Stratas.newPerQueryTierWriter(8));
-        return schema;
+        return initialize(new Stash(), mutator);
     }
 }
 

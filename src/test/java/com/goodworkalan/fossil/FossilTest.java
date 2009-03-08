@@ -9,11 +9,10 @@ import java.nio.ByteBuffer;
 
 import org.testng.annotations.Test;
 
-import com.goodworkalan.stash.Stash;
 import com.goodworkalan.pack.Creator;
 import com.goodworkalan.pack.Mutator;
 import com.goodworkalan.pack.Pack;
-import com.goodworkalan.strata.Extractor;
+import com.goodworkalan.stash.Stash;
 import com.goodworkalan.strata.Schema;
 
 public class FossilTest
@@ -21,14 +20,14 @@ public class FossilTest
     public final static class IntegerIO
     implements RecordIO<Integer>
     {
-        public void write(ByteBuffer bytes, Integer object)
+        public void write(ByteBuffer byteBuffer, Integer object)
         {
-            bytes.putInt(object);
+            byteBuffer.putInt(object);
         }
         
-        public Integer read(ByteBuffer bytes)
+        public Integer read(ByteBuffer byteBuffer)
         {
-            return bytes.getInt();
+            return byteBuffer.getInt();
         }
         
         public int getSize()
@@ -68,11 +67,10 @@ public class FossilTest
         Creator creator = new Creator();
         Pack pack = creator.create(new RandomAccessFile(file, "rw").getChannel());
         Mutator mutator = pack.mutate();
-        Schema<Integer, Integer> schema = Fossil.newFossilSchema();
-        schema.setInnerSize(5);
-        schema.setLeafSize(5);
-        schema.setExtractor(new IntegerExtractor());
-        schema.create(Fossil.initialize(new Stash(), mutator), new FossilStorage<Integer, Integer>(new IntegerIO()));        
+        Schema<Integer> schema = new Schema<Integer>();
+        schema.setInnerCapacity(5);
+        schema.setLeafCapacity(5);
+        schema.create(Fossil.initialize(new Stash(), mutator),  new FossilStorage<Integer>(new IntegerIO()));        
     }
 }
 
