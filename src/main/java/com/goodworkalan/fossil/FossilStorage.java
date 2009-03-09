@@ -1,144 +1,77 @@
 package com.goodworkalan.fossil;
 
-import java.nio.ByteBuffer;
-
-import com.goodworkalan.pack.Mutator;
-import com.goodworkalan.stash.Stash;
+import com.goodworkalan.strata.InnerStore;
+import com.goodworkalan.strata.LeafStore;
 import com.goodworkalan.strata.Storage;
-import com.goodworkalan.strata.Branch;
-import com.goodworkalan.strata.ChildType;
-import com.goodworkalan.strata.InnerTier;
-import com.goodworkalan.strata.LeafTier;
 
-// TODO Document.
+/**
+ * A persistent storage strategy for strata b-trees that writes to a pack file
+ * with the given record I/O strategy.
+ * 
+ * @author Alan Gutierrez
+ * 
+ * @param <T>
+ *            The value type of the b+tree objects.
+ */
 public class FossilStorage<T> implements Storage<T, Long>
 {
-    // TODO Document.
-    private final RecordIO<T> recordIO;
+    /** The storage strategy for inner tier branches. */
+    private final InnerStore<T, Long> innerStore;
     
-    // TODO Document.
+    /** The storage strategy for leaf tier value objects. */
+    private final LeafStore<T, Long> leafStore;
+
+    /**
+     * Create a persistent storage strategy for strata b-trees that writes to a
+     * pack file with the given record I/O strategy.
+     * 
+     * @param recordIO
+     *            The strategy to read and write an individual value object.
+     */
     public FossilStorage(RecordIO<T> recordIO)
     {
-        this.recordIO = recordIO;
+        this.innerStore = new FossilInnerStore<T>(recordIO);
+        this.leafStore = new FossilLeafStore<T>(recordIO);
     }
-    
-    // TODO Document.
-    private int getInnerSize(int size)
-    {
-        return Fossil.SIZEOF_INTEGER + Fossil.SIZEOF_SHORT + (size * (recordIO.getSize() + Fossil.SIZEOF_LONG));
-    }
- 
-    // TODO Document.
-   public Long allocate(Stash stash, InnerTier<T, Long> inner, int capacity)
-    {
-        Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);
-        return mutator.allocate(getInnerSize(capacity));
-    }
-    
-    // TODO Document.
-    public void load(Stash stash, Long address, InnerTier<T, Long> inner)
-    {  
-        Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);
 
-        ByteBuffer bytes = mutator.read(address);
-        int size = bytes.getInt();
-        short type = bytes.getShort();
-        inner.setChildType(type == 1 ? ChildType.INNER : ChildType.LEAF);
-        for (int i = 0; i < size; i++)
-        {
-            T object = recordIO.read(bytes);
-            Long childAddress = bytes.getLong();
-            inner.add(new Branch<T, Long>(object, childAddress));
-        }
+    /**
+     * Get the storage strategy for inner tiers.
+     * 
+     * @return The storage strategy for inner tiers.
+     */
+    public InnerStore<T, Long> getInnerStore()
+    {
+        return innerStore;
     }
     
-    // TODO Document.
-    public void write(Stash stash, InnerTier<T, Long> inner)
+    /**
+     * Get the storage strategy for leaf tiers.
+     * 
+     * @return The storage strategy for leaf tiers.
+     */
+    public LeafStore<T, Long> getLeafStore()
     {
-        Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);
+        return leafStore;
+    }
 
-        ByteBuffer byteBuffer = ByteBuffer.allocate(getInnerSize(inner.size()));
-        byteBuffer.putInt(inner.size());
-        byteBuffer.putShort(inner.getChildType() == ChildType.INNER ? (short) 1 : (short) 2);
-        for (int i = 0; i < inner.size(); i++)
-        {
-            T object = inner.get(i).getPivot();
-            recordIO.write(byteBuffer, object);
-            byteBuffer.putLong(inner.get(i).getAddress());
-        }
-        byteBuffer.flip();
-        
-        mutator.write(inner.getAddress(), byteBuffer);
-    }
-    
-    // TODO Document.
-    public void free(Stash stash, InnerTier<T, Long> inner)
-    {
-        Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);
-        mutator.free(inner.getAddress());
-    }
-    
-    // TODO Document.
-    private int getLeafSize(int size)
-    {
-        return Fossil.SIZEOF_INTEGER + Fossil.SIZEOF_LONG + (size * recordIO.getSize());
-    }
-    
-    // TODO Document.
-    public Long allocate(Stash stash, LeafTier<T, Long> leaf, int capacity)
-    {
-        Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);
-        return mutator.allocate(capacity);
-    }
-    
-    // TODO Document.
-    public void load(Stash stash, Long address, LeafTier<T, Long> leaf)
-    {
-        Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);
-        
-        ByteBuffer bytes = mutator.read(address);
-        int size = bytes.getInt();
-
-        leaf.setNext(bytes.getLong());
-        
-        for (int i = 0; i < size; i++)
-        {
-            T object = recordIO.read(bytes);
-            leaf.add(object);
-        }
-    }
-    
-    // TODO Document.
-    public void write(Stash stash, LeafTier<T, Long> leaf)
-    {
-        Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);
-
-        ByteBuffer bytes = ByteBuffer.allocate(getLeafSize(leaf.size()));
-        
-        bytes.putInt(leaf.size());
-        bytes.putLong(leaf.getNext());
-        for (int i = 0; i < leaf.size(); i++)
-        {
-            recordIO.write(bytes, leaf.get(i));
-        }
-        bytes.flip();
-        mutator.write(leaf.getAddress(), bytes);
-    }
-    
-    // TODO Document.
-    public void free(Stash stash, LeafTier<T, Long> leaf)
-    {
-        Mutator mutator = stash.get(Fossil.MUTATOR, Mutator.class);
-        mutator.free(leaf.getAddress());
-    }
-    
-    // TODO Document.
+    /**
+     * Get the null address value for this allocation strategy.
+     * 
+     * @return The null address value.
+     */
     public Long getNull()
     {
         return 0L;
     }
     
-    // TODO Document.
+    /**
+     * Return true if the given address is the null value for this allocation
+     * strategy.
+     * 
+     * @param address
+     *            A storage address.
+     * @return True if the address is null.
+     */
     public boolean isNull(Long address)
     {
         return address == 0L;

@@ -12,7 +12,6 @@ import org.testng.annotations.Test;
 import com.goodworkalan.pack.Creator;
 import com.goodworkalan.pack.Mutator;
 import com.goodworkalan.pack.Pack;
-import com.goodworkalan.stash.Stash;
 import com.goodworkalan.strata.Schema;
 
 public class FossilTest
@@ -33,15 +32,6 @@ public class FossilTest
         public int getSize()
         {
             return Integer.SIZE / Byte.SIZE;
-        }
-    }
-    
-    public final static class IntegerExtractor
-    implements Extractor<Integer, Integer>
-    {
-        public Integer extract(Stash stash, Integer integer)
-        {
-            return integer;
         }
     }
     
