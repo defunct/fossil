@@ -70,7 +70,7 @@ public class FossilTest
         Schema<Integer> schema = new Schema<Integer>();
         schema.setInnerCapacity(5);
         schema.setLeafCapacity(5);
-        schema.create(Fossil.newStash(mutator),  new FossilAllocator<Integer>(new IntegerIO()));        
+        schema.create(Fossil.newStash(mutator),  new FossilStorage<Integer>(new IntegerIO()));        
     }
 }
 

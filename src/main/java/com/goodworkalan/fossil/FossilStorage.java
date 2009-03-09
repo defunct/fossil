@@ -4,20 +4,20 @@ import java.nio.ByteBuffer;
 
 import com.goodworkalan.pack.Mutator;
 import com.goodworkalan.stash.Stash;
-import com.goodworkalan.strata.Allocator;
+import com.goodworkalan.strata.Storage;
 import com.goodworkalan.strata.Branch;
 import com.goodworkalan.strata.ChildType;
 import com.goodworkalan.strata.InnerTier;
 import com.goodworkalan.strata.LeafTier;
 
 // TODO Document.
-public class FossilAllocator<T> implements Allocator<T, Long>
+public class FossilStorage<T> implements Storage<T, Long>
 {
     // TODO Document.
     private final RecordIO<T> recordIO;
     
     // TODO Document.
-    public FossilAllocator(RecordIO<T> recordIO)
+    public FossilStorage(RecordIO<T> recordIO)
     {
         this.recordIO = recordIO;
     }
