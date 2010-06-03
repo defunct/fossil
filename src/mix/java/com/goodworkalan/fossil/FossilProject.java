@@ -4,23 +4,27 @@ import com.goodworkalan.mix.ProjectModule;
 import com.goodworkalan.mix.builder.Builder;
 import com.goodworkalan.mix.builder.JavaProject;
 
-public class FossilProject extends ProjectModule {
-    @Override
+/**
+ * Builds the project definition for Fossil.
+ *
+ * @author Alan Gutierrez
+ */
+public class FossilProject implements ProjectModule {
+    /**
+     * Build the project definition for Fossil.
+     *
+     * @param builder
+     *          The project builder.
+     */
     public void build(Builder builder) {
         builder
             .cookbook(JavaProject.class)
                 .produces("com.github.bigeasy.fossil/fossil/0.1")
-                .main()
-                    .depends()
-                        .include("com.github.bigeasy.strata/strata/0.+1")
-                        .include("com.github.bigeasy.pack/pack/0.+1")
-                        .end()
-                    .end()
-                .test()
-                    .depends()
-                        .include("org.testng/testng-jdk15/5.10")
-                        .include("org.mockito/mockito-core/1.6")
-                        .end()
+                .depends()
+                    .production("com.github.bigeasy.strata/strata/0.+1")
+                    .production("com.github.bigeasy.pack/pack/0.+1")
+                    .development("org.testng/testng-jdk15/5.10")
+                    .development("org.mockito/mockito-core/1.6")
                     .end()
                 .end()
             .end();
